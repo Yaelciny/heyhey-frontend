@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       {/* Fondo oscuro */}
-      <body className={`${inter.className} bg-[#0B0F19] text-white flex h-screen overflow-hidden`}>
+      <body suppressHydrationWarning className={`${inter.className} bg-[#0B0F19] text-white flex h-screen overflow-hidden`}>
 
         {/* Menú Lateral Fijo a la izquierda */}
         <Sidebar />
@@ -33,7 +33,7 @@ export default function RootLayout({
 
           {/* Área Principal con Scroll (Aquí es donde se inyecta page.tsx) */}
           <main className="flex-1 overflow-y-auto p-8">
-            <div className="max-w-7xl mx-auto space-y-8">
+            <div className="max-w-full mx-auto space-y-8">
               {children}
             </div>
           </main>
