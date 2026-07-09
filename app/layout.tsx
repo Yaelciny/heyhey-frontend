@@ -5,7 +5,10 @@ import "./globals.css";
 import Sidebar from "@/src/components/layout/Sidebar/Sidebar";
 import Navbar from "@/src/components/layout/Navbar/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap", // el navegador no se desespera y usa una fuente por defecto mientras carga
+});
 
 export const metadata: Metadata = {
   title: "Hey Hey | Tablero",

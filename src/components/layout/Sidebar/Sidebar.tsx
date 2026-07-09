@@ -1,7 +1,22 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LayoutDashboard, CheckSquare, Users, Settings } from "lucide-react";
 
 export default function Sidebar() {
+    const pathname = usePathname();
+
+    const navItems = [
+        { href: "/", icon: LayoutDashboard, label: "Tablero" },
+        { href: "/tareas", icon: CheckSquare, label: "Tareas" },
+        { href: "/equipo", icon: Users, label: "Equipo" },
+    ];
+
+    const systemItems = [
+        { href: "/configuracion", icon: Settings, label: "Configuración" },
+    ];
+
     return (
         <aside className="w-64 bg-[#0a0a0b] text-gray-400 h-screen border-r border-gray-800/60 flex flex-col">
 
@@ -23,24 +38,28 @@ export default function Sidebar() {
                     Principal
                 </p>
                 <nav className="space-y-1 mb-8">
-                    {/* Opción Activa (Tablero) */}
-                    <Link href="/" className="flex items-center justify-between px-3 py-2.5 bg-yellow-500/10 text-yellow-500 rounded-lg border border-yellow-500/20">
-                        <div className="flex items-center gap-3">
-                            <LayoutDashboard size={18} />
-                            <span className="font-semibold text-sm">Tablero</span>
-                        </div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
-                    </Link>
-
-                    <Link href="/tareas" className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-800/40 hover:text-gray-200 rounded-lg transition-colors">
-                        <CheckSquare size={18} strokeWidth={1.5} />
-                        <span className="font-medium text-sm">Tareas</span>
-                    </Link>
-
-                    <Link href="/equipo" className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-800/40 hover:text-gray-200 rounded-lg transition-colors">
-                        <Users size={18} strokeWidth={1.5} />
-                        <span className="font-medium text-sm">Equipo</span>
-                    </Link>
+                    {navItems.map((item) => {
+                        const isActive = pathname === item.href;
+                        const Icon = item.icon;
+                        
+                        return (
+                            <Link 
+                                key={item.href} 
+                                href={item.href} 
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                                    isActive 
+                                    ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 justify-between" 
+                                    : "hover:bg-gray-800/40 hover:text-gray-200"
+                                }`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />
+                                    <span className={`text-sm ${isActive ? "font-semibold" : "font-medium"}`}>{item.label}</span>
+                                </div>
+                                {isActive && <div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>}
+                            </Link>
+                        );
+                    })}
                 </nav>
 
                 {/* Navegación de Sistema */}
@@ -48,10 +67,28 @@ export default function Sidebar() {
                     Sistema
                 </p>
                 <nav className="space-y-1">
-                    <Link href="/configuracion" className="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-800/40 hover:text-gray-200 rounded-lg transition-colors">
-                        <Settings size={18} strokeWidth={1.5} />
-                        <span className="font-medium text-sm">Configuración</span>
-                    </Link>
+                    {systemItems.map((item) => {
+                        const isActive = pathname === item.href;
+                        const Icon = item.icon;
+
+                        return (
+                            <Link 
+                                key={item.href} 
+                                href={item.href} 
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                                    isActive 
+                                    ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 justify-between" 
+                                    : "hover:bg-gray-800/40 hover:text-gray-200"
+                                }`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />
+                                    <span className={`text-sm ${isActive ? "font-semibold" : "font-medium"}`}>{item.label}</span>
+                                </div>
+                                {isActive && <div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>}
+                            </Link>
+                        );
+                    })}
                 </nav>
             </div>
 

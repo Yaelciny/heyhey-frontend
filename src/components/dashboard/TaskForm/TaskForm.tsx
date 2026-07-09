@@ -1,6 +1,57 @@
+"use client"
+
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function TaskForm() {
+    // Catalogo de empleado
+    const [empleados, setEmpleados] = useState<any[]>([]);
+    // Cargar empleados al iniciar
+    useEffect(() => {
+        fetch("http://localhost:8081/system/api/v1/persona")
+            .then((response) => response.json())
+            .then((data) => setEmpleados(data))
+            .catch((error) => console.log("Error al cargar empleados ", error))
+    }, []);
+
+    // Capturar datos del formulario
+    const [titulo, setTitulo] = useState("");
+    const [descripcion, setDescripcion] = useState("");
+    const [idCategoria, setIdCategoria] = useState("1"); // Por defecto la categoría 1
+    const [idEmpleado, setIdEmpleado] = useState("");
+    const [estado, setEstado] = useState(1); // 1 = Pendiente (INT como en tu DB)
+    const [fechaLimite, setFechaLimite] = useState("");
+
+    // Por ahora es 1
+    const idAdministrador = 1;
+
+    // Funcion para enviar datos al POST
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault(); // evita que la pagina recargue
+
+        //Validamos que los campos tengan informacion
+        if (!titulo || !idEmpleado || !fechaLimite) {
+            alert("Por favor, llena todos los campos marcados con *");
+            return;
+        }
+
+        const nuevaTareaDTO = {
+            titulo,
+            descripcion,
+            idCategoria: parseInt(idCategoria),
+            idEmpleado: parseInt(idEmpleado),
+            idAdministrador,
+            estado,
+            fechaLimite, // Formato YYYY-MM-DD
+        };
+
+        console.log("Mandando este objeto al servidor:", nuevaTareaDTO);
+
+        fetch()
+
+
+    }
+
     return (
         <div className="bg-[#0f141f] border border-gray-800/60 rounded-xl p-6 mb-8">
 
@@ -34,10 +85,12 @@ export default function TaskForm() {
                             Asignar a *
                         </label>
                         <select className="w-full bg-[#111827] border border-gray-800 text-gray-300 text-sm rounded-lg p-2.5 focus:outline-none focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/50 transition-all appearance-none cursor-pointer">
-                            <option>Yael</option>
-                            <option>Benyi</option>
-                            <option>Montserrat</option>
-                            <option>Ana García</option>
+                            <option value="">Seleccionar empleado</option>
+                            {empleados.map((empleado) => (
+                                <option key={empleado.idPersona} value={empleado.id}>
+                                    {empleado.nombre} {empleado.apellidos}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
