@@ -41,16 +41,15 @@ export default function Sidebar() {
                     {navItems.map((item) => {
                         const isActive = pathname === item.href;
                         const Icon = item.icon;
-                        
+
                         return (
-                            <Link 
-                                key={item.href} 
-                                href={item.href} 
-                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                                    isActive 
-                                    ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 justify-between" 
-                                    : "hover:bg-gray-800/40 hover:text-gray-200"
-                                }`}
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive
+                                        ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 justify-between"
+                                        : "hover:bg-gray-800/40 hover:text-gray-200"
+                                    }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />
@@ -72,14 +71,13 @@ export default function Sidebar() {
                         const Icon = item.icon;
 
                         return (
-                            <Link 
-                                key={item.href} 
-                                href={item.href} 
-                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                                    isActive 
-                                    ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 justify-between" 
-                                    : "hover:bg-gray-800/40 hover:text-gray-200"
-                                }`}
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive
+                                        ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 justify-between"
+                                        : "hover:bg-gray-800/40 hover:text-gray-200"
+                                    }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />
