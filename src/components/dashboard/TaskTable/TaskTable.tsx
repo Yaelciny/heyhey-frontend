@@ -1,23 +1,50 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckSquare } from "lucide-react";
+import { CheckSquare, Play, CheckCircle2, RefreshCw } from "lucide-react";
 
 export default function TaskTable() {
     const [tareas, setTareas] = useState<any[]>([]);
 
-    // Hacemos la peticion
-    useEffect(() => {
+    // 1. LEER: Función para cargar las tareas desde el backend
+    const cargarTareas = () => {
         fetch("http://localhost:8081/system/api/v1/tareas-enviadas")
             .then((response) => response.json())
             .then((data) => {
-                console.log("Tareas recibidas:", data);
-                setTareas(data);
+                if (Array.isArray(data)) {
+                    setTareas(data);
+                } else {
+                    setTareas([]);
+                }
             })
             .catch((error) => console.error("Error cargando la tabla:", error));
+    };
+
+    useEffect(() => {
+        cargarTareas();
     }, []);
 
-    // Función auxiliar para pintar el diseño del estado según el INT de tu base de datos
+    // 2. ACTUALIZAR: Función para tocar la nueva puerta PUT de Spring Boot
+    const handleCambiarEstado = (idEnvio: number, nuevoEstado: number) => {
+        fetch(`http://localhost:8081/system/api/v1/tareas-enviadas/${idEnvio}/estado`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(nuevoEstado), // Mandamos el número entero limpio
+        })
+            .then((response) => {
+                if (response.ok) {
+                    // Si el backend responde bien, recargamos la lista al instante
+                    cargarTareas();
+                } else {
+                    alert("No se pudo actualizar el estado de la tarea.");
+                }
+            })
+            .catch((error) => console.error("Error actualizando estado:", error));
+    };
+
+    // Función auxiliar para pintar el diseño del estado (Se mantiene igual)
     const renderEstado = (estadoInt: number) => {
         if (estadoInt === 1) {
             return (
@@ -43,7 +70,7 @@ export default function TaskTable() {
     return (
         <div className="bg-[#0f141f] border border-gray-800/60 rounded-xl p-6">
 
-            {/* Encabezado y Pestañas (Se mantienen igual) */}
+            {/* Encabezado */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-gray-800/60 pb-4">
                 <div className="flex items-center gap-3">
                     <div className="text-yellow-500">
@@ -52,14 +79,21 @@ export default function TaskTable() {
                     <h2 className="text-white font-bold text-sm">Registro de Tareas</h2>
                 </div>
 
-                <div className="flex space-x-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
-                    <button className="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap">
-                        Todas <span className="ml-1 bg-yellow-500 text-black px-1.5 py-0.5 rounded text-[10px]">{tareas.length}</span>
+                <div className="flex space-x-2">
+                    <button
+                        onClick={cargarTareas}
+                        className="bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white p-1.5 rounded-lg border border-gray-700 transition-colors"
+                        title="Refrescar tabla"
+                    >
+                        <RefreshCw size={14} />
                     </button>
+                    <span className="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap">
+                        Todas <span className="ml-1 bg-yellow-500 text-black px-1.5 py-0.5 rounded text-[10px]">{tareas.length}</span>
+                    </span>
                 </div>
             </div>
 
-            {/* Tabla de Registros Dinámica */}
+            {/* Tabla */}
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm whitespace-nowrap">
                     <thead>
@@ -68,13 +102,14 @@ export default function TaskTable() {
                             <th className="pb-3 font-medium">Asignado A</th>
                             <th className="pb-3 font-medium">Estado</th>
                             <th className="pb-3 font-medium">Fecha Límite</th>
+                            <th className="pb-3 font-medium text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800/60">
 
                         {tareas.length === 0 ? (
                             <tr>
-                                <td colSpan={4} className="py-8 text-center text-gray-500">
+                                <td colSpan={5} className="py-8 text-center text-gray-500">
                                     No hay tareas registradas aún.
                                 </td>
                             </tr>
@@ -103,6 +138,35 @@ export default function TaskTable() {
                                         </td>
 
                                         <td className="py-4 text-gray-500 text-xs font-medium">{fecha}</td>
+
+                                        {/* BOTONES DE ACCIÓN INTERACTIVOS */}
+                                        <td className="py-4 text-center">
+                                            <div className="flex justify-center gap-2">
+                                                {item.estado === 1 && (
+                                                    <button
+                                                        onClick={() => handleCambiarEstado(item.idEnvio, 2)}
+                                                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 text-xs font-bold border border-purple-500/20 transition-colors"
+                                                    >
+                                                        <Play size={12} fill="currentColor" />
+                                                        Iniciar
+                                                    </button>
+                                                )}
+                                                {item.estado === 2 && (
+                                                    <button
+                                                        onClick={() => handleCambiarEstado(item.idEnvio, 3)}
+                                                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/20 transition-colors"
+                                                    >
+                                                        <img src="" alt="" /><CheckCircle2 size={12} />
+                                                        Completar
+                                                    </button>
+                                                )}
+                                                {item.estado >= 3 && (
+                                                    <span className="text-gray-600 text-xs italic font-medium">
+                                                        Sin acciones
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
                                     </tr>
                                 );
                             })
