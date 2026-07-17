@@ -156,7 +156,7 @@ export default function TaskTable() {
                                                         onClick={() => handleCambiarEstado(item.idEnvio, 3)}
                                                         className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/20 transition-colors"
                                                     >
-                                                        <img src="" alt="" /><CheckCircle2 size={12} />
+                                                        <CheckCircle2 size={12} />
                                                         Completar
                                                     </button>
                                                 )}

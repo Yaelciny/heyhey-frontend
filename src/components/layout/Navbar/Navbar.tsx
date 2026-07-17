@@ -1,6 +1,40 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Search, Bell, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
+    // Estados para guardar los datos dinámicos
+    const [nombreCompleto, setNombreCompleto] = useState("Cargando...");
+    const [iniciales, setIniciales] = useState("");
+
+    useEffect(() => {
+        fetch("http://localhost:8081/system/api/v1/administrador")
+            .then((res) => res.json())
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    // Buscamos al administrador número 1
+                    const adminUno = data.find((admin) => admin.idAdministrador === 1);
+
+                    if (adminUno && adminUno.persona) {
+                        const nombre = adminUno.persona.nombre;
+                        const apellidos = adminUno.persona.apellidos;
+
+                        setNombreCompleto(`${nombre} ${apellidos}`);
+
+                        // Calculamos las iniciales dinámicamente ("CG")
+                        const letras = `${nombre.charAt(0)}${apellidos.charAt(0)}`.toUpperCase();
+                        setIniciales(letras);
+                    }
+                }
+            })
+            .catch((err) => {
+                console.error("Error en Navbar:", err);
+                setNombreCompleto("Carlos Gomez");
+                setIniciales("CG");
+            });
+    }, []);
+
     return (
         <header className="h-16 flex items-center justify-between px-8 bg-[#0B0F19] border-b border-gray-800/60 sticky top-0 z-10">
 
@@ -28,13 +62,13 @@ export default function Navbar() {
                 {/* Separador vertical */}
                 <div className="h-6 w-0.5 bg-gray-800"></div>
 
-                {/* Usuario (Simulado con los datos de tu imagen) */}
+                {/* Usuario Dinámico */}
                 <button className="flex items-center gap-3 hover:bg-gray-800/40 p-1.5 rounded-lg transition-colors text-left">
                     <div className="w-8 h-8 rounded-full bg-yellow-900/30 text-yellow-500 border border-yellow-500/20 flex items-center justify-center font-bold text-xs">
-                        YM
+                        {iniciales}
                     </div>
                     <div className="hidden md:block">
-                        <p className="text-sm font-bold text-white leading-tight">Yael Magdaleno</p>
+                        <p className="text-sm font-bold text-white leading-tight">{nombreCompleto}</p>
                         <p className="text-xs text-gray-500 font-medium">Administrador</p>
                     </div>
                     <ChevronDown size={14} className="text-gray-500 ml-1" />
